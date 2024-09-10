@@ -1,17 +1,19 @@
 import {createElement} from '../../render.js';
 import {TRAVEL_POINTS} from '../../const.js';
 
-function createEventTypeList() {
-  return TRAVEL_POINTS.map((point) => `<div
-    class="event__type-item">
-    <input id="event-type-${point}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${point}">
-    <label class="event__type-label  event__type-label--${point}" for="event-type-${point}-1">${point}</label>
- </div>`).join('');
-}
+const createEventType = (type) => `
+        <div class="event__type-item">
+            <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+            <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
+        </div>`;
 
-function editFormTemplate(point) {
-  const {pointsType, destination} = point;
-  const eventTypePointsList = createEventTypeList();
+const createEventTypeList = TRAVEL_POINTS.map((point) => createEventType(point)).join('');
+
+function editFormTemplate(point, destination, offers, allDestinations) {
+  const {type} = point;
+
+  const createDestinationTemplate = allDestinations
+    .map((item) => `<option value="${item.name}"></option>`).join('');
 
   return `
     <form class="event event--edit" action="#" method="post">
@@ -19,29 +21,25 @@ function editFormTemplate(point) {
                   <div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
                       <span class="visually-hidden">Choose event type</span>
-                      <img class="event__type-icon" width="17" height="17" src="img/icons/${pointsType}.png" alt="Event type icon">
+                      <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
                     </label>
                     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
                     <div class="event__type-list">
                       <fieldset class="event__type-group">
                         <legend class="visually-hidden">Event type</legend>
-
-                        ${eventTypePointsList}
-
+                        ${createEventTypeList}
                       </fieldset>
                     </div>
                   </div>
 
                   <div class="event__field-group  event__field-group--destination">
                     <label class="event__label  event__type-output" for="event-destination-1">
-                      ${pointsType}
+                      ${type}
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      <option value="Amsterdam"></option>
-                      <option value="Geneva"></option>
-                      <option value="Chamonix"></option>
+                      ${createDestinationTemplate}
                     </datalist>
                   </div>
 
@@ -120,7 +118,7 @@ function editFormTemplate(point) {
                   </section>
 
                   <section class="event__section  event__section--destination">
-                    <h3 class="event__section-title  event__section-title--destination">${destination}</h3>
+                    <h3 class="event__section-title  event__section-title--destination">${destination.name}</h3>
                     <p class="event__destination-description">${destination.description}</p>
                   </section>
                 </section>
@@ -129,12 +127,15 @@ function editFormTemplate(point) {
 }
 
 export default class EditFormView {
-  constructor({point}) {
+  constructor({point, destination, offers, allDestinations}) {
     this.point = point;
+    this.destination = destination;
+    this.offers = offers;
+    this.allDestinations = allDestinations;
   }
 
   getTemplate() {
-    return editFormTemplate(this.point);
+    return editFormTemplate(this.point, this.destination, this.offers, this.allDestinations);
   }
 
   getElement() {

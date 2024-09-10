@@ -17,11 +17,25 @@ export default class MainPresenter {
 
   init() {
     this.boardPoints = [...this.pointsModel.getPoints()];
+
     render(this.boardComponent, this.boardContainer);
     render(this.boardListPoints, this.boardComponent.getElement());
-    render(new EditFormView({point: this.boardPoints[0]}), this.boardListPoints.getElement());
-    for (let i = 1; i < 5; i++) {
-      render(new PointView({point: this.boardPoints[i]}), this.boardListPoints.getElement());
+
+    render(new EditFormView({
+      point: this.boardPoints[0],
+      destination: this.pointsModel.getDestinationById(this.boardPoints[0].destination),
+      offers: this.pointsModel.getOffersByType(this.boardPoints[1].type),
+      allDestinations: this.pointsModel.getDestinations()
+    }), this.boardListPoints.getElement());
+
+    for (let i = 1; i < 6; i++) {
+      const point = new PointView({
+        point: this.boardPoints[i],
+        offers: [...this.pointsModel.getOffersById(this.boardPoints[i].type, this.boardPoints[i].offers)],
+        destination: this.pointsModel.getDestinationById(this.boardPoints[i].destination),
+      });
+
+      render(point, this.boardListPoints.getElement());
     }
 
     render(new CreateFormView(), this.boardComponent.getElement());
