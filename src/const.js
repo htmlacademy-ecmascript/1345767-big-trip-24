@@ -10,4 +10,8 @@ const TRAVEL_POINTS = [
   'Restaurant',
 ];
 
-export {TRAVEL_POINTS};
+const DATE_FORMAT = 'DD/MMM';
+const TIME_FORMAT = 'HH:mm';
+const FULL_DATE_FORMAT = 'DD/MM/YY HH:mm';
+
+export {TRAVEL_POINTS, DATE_FORMAT, TIME_FORMAT, FULL_DATE_FORMAT};
