@@ -4,7 +4,7 @@ import EditFormView from '../view/form-manipulation/edit-form-view.js';
 import PointsListView from '../view/main-board/points-list-view.js';
 import PointView from '../view/main-board/point-view.js';
 
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 
 export default class MainPresenter {
   boardComponent = new MainBoardView();

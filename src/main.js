@@ -4,7 +4,7 @@ import TripInfoView from './view/header/trip-info-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import PointsModel from './model/point-model.js';
 
-import {render, RenderPosition} from './render.js';
+import {render, RenderPosition} from './framework/render.js';
 
 const mainPage = document.querySelector('.page-main');
 const tripMainElement = document.querySelector('.trip-main');
