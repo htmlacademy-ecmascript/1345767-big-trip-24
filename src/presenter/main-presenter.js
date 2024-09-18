@@ -61,8 +61,12 @@ export default class MainPresenter {
       allDestinations: this.#pointsModel.getDestinations(),
       onFormSubmit: ()=> {
         replaceFormToPoint();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+        document.removeEventListener('keydown', escKeyDownHandler);
+      },
+      onCloseForm: () => {
+        replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      },
     });
 
     function replacePointToForm() {
