@@ -2,6 +2,7 @@ import MainBoardView from '../view/main-board/main-board-view.js';
 import EditFormView from '../view/form-manipulation/edit-form-view.js';
 import PointsListView from '../view/main-board/points-list-view.js';
 import PointView from '../view/main-board/point-view.js';
+import ListMessageView from '../view/main-board/list-message-view.js';
 
 import {render, replace} from '../framework/render.js';
 
@@ -21,9 +22,20 @@ export default class MainPresenter {
 
   init() {
     this.#boardPoints = [...this.#pointsModel.getPoints()];
+    this.#renderPointsList();
+  }
 
+  #renderPointsList() {
     render(this.#boardComponent, this.#boardContainer);
     render(this.#boardListPoints, this.#boardComponent.element);
+
+    if (this.#boardPoints.length === 0) {
+      render(
+        new ListMessageView({message: 'Click New Event to create your first point'}),
+        this.#boardListPoints.element
+      );
+      return;
+    }
 
     for (let i = 0; i < this.#boardPoints.length; i++) {
       const point = this.#boardPoints[i];
