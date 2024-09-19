@@ -1,5 +1,5 @@
-import {createElement} from '../../render.js';
 import {TRAVEL_POINTS} from '../../const.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 const createEventType = (type) => `
         <div class="event__type-item">
@@ -126,23 +126,21 @@ function editFormTemplate(point, destination, offers, allDestinations) {
   `;
 }
 
-export default class EditFormView {
+export default class EditFormView extends AbstractView {
+  #point = null;
+  #destination = null;
+  #offers = null;
+  #allDestinations = null;
+
   constructor({point, destination, offers, allDestinations}) {
-    this.point = point;
-    this.destination = destination;
-    this.offers = offers;
-    this.allDestinations = allDestinations;
+    super();
+    this.#point = point;
+    this.#destination = destination;
+    this.#offers = offers;
+    this.#allDestinations = allDestinations;
   }
 
-  getTemplate() {
-    return editFormTemplate(this.point, this.destination, this.offers, this.allDestinations);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
+  get template() {
+    return editFormTemplate(this.#point, this.#destination, this.#offers, this.#allDestinations);
   }
 }

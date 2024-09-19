@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 function createBoardViewTemplate() {
   return `
@@ -8,20 +8,8 @@ function createBoardViewTemplate() {
     `;
 }
 
-export default class MainBoardView {
-  getTemplate() {
+export default class MainBoardView extends AbstractView {
+  get template() {
     return createBoardViewTemplate();
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

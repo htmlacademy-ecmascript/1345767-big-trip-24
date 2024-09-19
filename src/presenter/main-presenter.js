@@ -4,7 +4,7 @@ import EditFormView from '../view/form-manipulation/edit-form-view.js';
 import PointsListView from '../view/main-board/points-list-view.js';
 import PointView from '../view/main-board/point-view.js';
 
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 
 export default class MainPresenter {
   boardComponent = new MainBoardView();
@@ -19,14 +19,14 @@ export default class MainPresenter {
     this.boardPoints = [...this.pointsModel.getPoints()];
 
     render(this.boardComponent, this.boardContainer);
-    render(this.boardListPoints, this.boardComponent.getElement());
+    render(this.boardListPoints, this.boardComponent.element);
 
     render(new EditFormView({
       point: this.boardPoints[0],
       destination: this.pointsModel.getDestinationById(this.boardPoints[0].destination),
       offers: this.pointsModel.getOffersByType(this.boardPoints[1].type),
       allDestinations: this.pointsModel.getDestinations()
-    }), this.boardListPoints.getElement());
+    }), this.boardListPoints.element);
 
     for (let i = 1; i < 6; i++) {
       const point = new PointView({
@@ -35,9 +35,9 @@ export default class MainPresenter {
         destination: this.pointsModel.getDestinationById(this.boardPoints[i].destination),
       });
 
-      render(point, this.boardListPoints.getElement());
+      render(point, this.boardListPoints.element);
     }
 
-    render(new CreateFormView(), this.boardComponent.getElement());
+    render(new CreateFormView(), this.boardComponent.element);
   }
 }
