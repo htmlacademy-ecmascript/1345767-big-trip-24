@@ -64,6 +64,7 @@ export default class PointView extends AbstractView {
   #handleEditClick = null;
 
   constructor({point, destination, offers, onClick}) {
+
     super();
     this.#point = point;
     this.#destination = destination;
@@ -80,4 +81,5 @@ export default class PointView extends AbstractView {
     evt.preventDefault();
     this.#handleEditClick();
   };
+
 }

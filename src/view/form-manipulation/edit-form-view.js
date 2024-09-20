@@ -161,4 +161,5 @@ export default class EditFormView extends AbstractView {
     evt.preventDefault();
     this.#handleCloseForm();
   };
+
 }
