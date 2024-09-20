@@ -29,4 +29,27 @@ function formatToFullDate(date) {
   return dayjs(date).format(FULL_DATE_FORMAT);
 }
 
-export {getRandomArrayElement, getRandomNumber, getCurrentDate, formatToDate, formatToTime, formatToFullDate, humanizePointDueDate};
+function isActualPoint(point) {
+  return point.dateTo && (dayjs().isSame(dayjs(point.dateFrom), 'minute') || dayjs().isAfter(dayjs(point.dateTo), 'milliseconds'));
+}
+
+function isExpiredPoint(point) {
+  return dayjs(point.dateTo) && dayjs().isAfter(dayjs(point.dateTo), 'milliseconds');
+}
+
+function isFuturePoint(point) {
+  return dayjs().isBefore(point.dateFrom, 'minute');
+}
+
+export {
+  getRandomArrayElement,
+  getRandomNumber,
+  getCurrentDate,
+  formatToDate,
+  formatToTime,
+  formatToFullDate,
+  humanizePointDueDate,
+  isFuturePoint,
+  isActualPoint,
+  isExpiredPoint
+};
