@@ -1,10 +1,10 @@
 import MainBoardView from '../view/main-board/main-board-view.js';
-import EditFormView from '../view/form-manipulation/edit-form-view.js';
 import PointsListView from '../view/main-board/points-list-view.js';
-import PointView from '../view/main-board/point-view.js';
 import ListMessageView from '../view/main-board/list-message-view.js';
 
-import {render, replace} from '../framework/render.js';
+import {render} from '../framework/render.js';
+
+import PointPresenter from './point-presenter.js';
 
 export default class MainPresenter {
   #boardContainer = null;
@@ -44,52 +44,16 @@ export default class MainPresenter {
         point,
         [...this.#pointsModel.getOffersById(point.type, point.offers)],
         this.#pointsModel.getDestinationById(point.destination),
+        this.#pointsModel.getDestinations(),
       );
     }
   }
 
-  #renderPoint(point, offers, destination) {
-    const escKeyDownHandler = (evt) => {
-      if(evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointComponent = new PointView({
-      point: point,
-      offers: offers,
-      destination: destination,
-      onClick: ()=> {
-        replacePointToForm();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+  #renderPoint(point, offers, destination, allDestinations) {
+    const pointPresenter = new PointPresenter({
+      pointsListContainer: this.#boardListPoints.element
     });
 
-    const editFormPoint = new EditFormView({
-      point: point,
-      offers: offers,
-      destination: destination,
-      allDestinations: this.#pointsModel.getDestinations(),
-      onFormSubmit: ()=> {
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-      onCloseForm: () => {
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-    });
-
-    function replacePointToForm() {
-      replace(editFormPoint, pointComponent);
-    }
-
-    function replaceFormToPoint() {
-      replace(pointComponent, editFormPoint);
-    }
-
-    render(pointComponent, this.#boardListPoints.element);
+    pointPresenter.init(point, offers, destination, allDestinations);
   }
 }
