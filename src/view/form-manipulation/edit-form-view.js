@@ -16,6 +16,7 @@ function editFormTemplate(point, destination, offers, allDestinations) {
     .map((item) => `<option value="${item.name}"></option>`).join('');
 
   return `
+<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
                   <div class="event__type-wrapper">
@@ -37,7 +38,7 @@ function editFormTemplate(point, destination, offers, allDestinations) {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       ${createDestinationTemplate}
                     </datalist>
@@ -123,6 +124,7 @@ function editFormTemplate(point, destination, offers, allDestinations) {
                   </section>
                 </section>
               </form>
+              </li>
   `;
 }
 
@@ -131,16 +133,33 @@ export default class EditFormView extends AbstractView {
   #destination = null;
   #offers = null;
   #allDestinations = null;
+  #handleFormSubmit = null;
+  #handleCloseForm = null;
 
-  constructor({point, destination, offers, allDestinations}) {
+  constructor({point, destination, offers, allDestinations, onFormSubmit, onCloseForm}) {
     super();
     this.#point = point;
     this.#destination = destination;
     this.#offers = offers;
     this.#allDestinations = allDestinations;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleCloseForm = onCloseForm;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditForm);
+    this.element.querySelector('.event__save-btn').addEventListener('submit', this.#formSubmitHandler);
   }
 
   get template() {
     return editFormTemplate(this.#point, this.#destination, this.#offers, this.#allDestinations);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
+
+  #closeEditForm = (evt) => {
+    evt.preventDefault();
+    this.#handleCloseForm();
+  };
+
 }

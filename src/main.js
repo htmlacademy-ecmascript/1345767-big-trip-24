@@ -4,6 +4,7 @@ import TripInfoView from './view/header/trip-info-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import PointsModel from './model/point-model.js';
 
+import {generateFilters} from './mock/filters-mock.js';
 import {render, RenderPosition} from './framework/render.js';
 
 const mainPage = document.querySelector('.page-main');
@@ -13,13 +14,14 @@ const tripEventsElement = document.querySelector('.trip-events');
 const mainContainer = mainPage.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
+const filters = generateFilters(pointsModel.points);
 const mainPresenter = new MainPresenter({
   boardContainer: mainContainer,
   pointsModel: pointsModel,
 });
 
 render(new TripInfoView(), tripMainElement, RenderPosition.AFTERBEGIN);
-render(new FiltersView(), tripControlsFiltersElement);
+render(new FiltersView({filters}), tripControlsFiltersElement);
 render(new SortView(), tripEventsElement);
 
 mainPresenter.init();

@@ -1,6 +1,5 @@
 import AbstractView from '../../framework/view/abstract-view.js';
-
-const FILTER_TYPES = ['everything', 'future', 'present', 'past'];
+import {FiltersPoint} from '../../filter-const.js';
 
 const generateFilterButton = (filters) => filters.map((filter) => (
   `<div class="trip-filters__filter">
@@ -30,7 +29,15 @@ function createFiltersTemplate(filters) {
 }
 
 export default class FiltersView extends AbstractView {
+  #filters = null;
+
+  constructor({filters}) {
+    super();
+    this.#filters = filters;
+  }
+
   get template() {
-    return createFiltersTemplate();
+    return createFiltersTemplate(this.#filters);
+
   }
 }
