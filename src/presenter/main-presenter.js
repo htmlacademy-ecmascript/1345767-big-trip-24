@@ -3,26 +3,31 @@ import PointsListView from '../view/main-board/points-list-view.js';
 import ListMessageView from '../view/main-board/list-message-view.js';
 
 import {render} from '../framework/render.js';
+import {updateItem} from '../utils.js';
 
 import PointPresenter from './point-presenter.js';
 
 export default class MainPresenter {
   #boardContainer = null;
-  #pointsModel = null;
+  #pointModel = null;
 
   #boardComponent = new MainBoardView();
   #boardListPoints = new PointsListView();
 
-  #boardPoints = [];
+  #points = [];
+  #destinations = [];
+  #offers = [];
+  #pointPresenters = new Map;
 
-  constructor({boardContainer, pointsModel}) {
+  constructor({boardContainer, pointModel}) {
     this.#boardContainer = boardContainer;
-    this.#pointsModel = pointsModel;
+    this.#pointModel = pointModel;
   }
 
   init() {
-
-    this.#boardPoints = [...this.#pointsModel.getPoints()];
+    this.#points = [...this.#pointModel.points];
+    this.#destinations = [...this.#pointModel.destinations];
+    this.#offers = [...this.#pointModel.offers];
     this.#renderPointsList();
   }
 
@@ -30,30 +35,40 @@ export default class MainPresenter {
     render(this.#boardComponent, this.#boardContainer);
     render(this.#boardListPoints, this.#boardComponent.element);
 
-    if (this.#boardPoints.length === 0) {
-      render(
-        new ListMessageView({message: 'Click New Event to create your first point'}),
-        this.#boardListPoints.element
-      );
-      return;
+    if (this.#points.length === 0) {
+      this.#renderNoPoints();
     }
 
-    for (let i = 0; i < this.#boardPoints.length; i++) {
-      const point = this.#boardPoints[i];
-      this.#renderPoint(
-        point,
-        [...this.#pointsModel.getOffersById(point.type, point.offers)],
-        this.#pointsModel.getDestinationById(point.destination),
-        this.#pointsModel.getDestinations(),
-      );
+    this.#renderPoints();
+  }
+
+  #renderNoPoints() {
+    render(
+      new ListMessageView({message: 'Click New Event to create your first point'}),
+      this.#boardListPoints.element
+    );
+  }
+
+  #renderPoints() {
+    for (const point of this.#points) {
+      this.#renderPoint(point);
     }
   }
 
-  #renderPoint(point, offers, destination, allDestinations) {
+  #renderPoint(point) {
     const pointPresenter = new PointPresenter({
-      pointsListContainer: this.#boardListPoints.element
+      pointsListContainer: this.#boardListPoints.element,
+      onDataChange: this.#handlePointChange,
     });
 
-    pointPresenter.init(point, offers, destination, allDestinations);
+    pointPresenter.init(point, this.#offers, this.#destinations);
+
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id)
+      .init(updatedPoint, this.#offers, this.#destinations);
+  };
 }
