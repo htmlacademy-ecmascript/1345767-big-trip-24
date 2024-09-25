@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {DATE_FORMAT, TIME_FORMAT, FULL_DATE_FORMAT} from './const.js';
+import {DATE_FORMAT} from './const.js';
 
 function getRandomNumber(number) {
   return Math.floor(Math.random() * number);
@@ -17,18 +17,6 @@ function getCurrentDate() {
   return dayjs.toDate();
 }
 
-function formatToDate(date) {
-  return dayjs(date).format(DATE_FORMAT);
-}
-
-function formatToTime(date) {
-  return dayjs(date).format(TIME_FORMAT);
-}
-
-function formatToFullDate(date) {
-  return dayjs(date).format(FULL_DATE_FORMAT);
-}
-
 function isActualPoint(point) {
   return point.dateTo && (dayjs().isSame(dayjs(point.dateFrom), 'minute') || dayjs().isAfter(dayjs(point.dateTo), 'milliseconds'));
 }
@@ -41,15 +29,15 @@ function isFuturePoint(point) {
   return dayjs().isBefore(point.dateFrom, 'minute');
 }
 
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
 export {
   getRandomArrayElement,
   getRandomNumber,
   getCurrentDate,
-  formatToDate,
-  formatToTime,
-  formatToFullDate,
   humanizePointDueDate,
   isFuturePoint,
   isActualPoint,
-  isExpiredPoint
+  isExpiredPoint,
+  updateItem,
 };
