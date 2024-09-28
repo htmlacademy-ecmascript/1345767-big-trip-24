@@ -91,28 +91,5 @@ export default class MainPresenter {
     }
 
     render(pointComponent, this.#boardListPoints.element);
-    this.boardPoints = [...this.pointsModel.getPoints()];
-
-    render(this.boardComponent, this.boardContainer);
-    render(this.boardListPoints, this.boardComponent.element);
-
-    render(new EditFormView({
-      point: this.boardPoints[0],
-      destination: this.pointsModel.getDestinationById(this.boardPoints[0].destination),
-      offers: this.pointsModel.getOffersByType(this.boardPoints[1].type),
-      allDestinations: this.pointsModel.getDestinations()
-    }), this.boardListPoints.element);
-
-    for (let i = 1; i < 6; i++) {
-      const point = new PointView({
-        point: this.boardPoints[i],
-        offers: [...this.pointsModel.getOffersById(this.boardPoints[i].type, this.boardPoints[i].offers)],
-        destination: this.pointsModel.getDestinationById(this.boardPoints[i].destination),
-      });
-
-      render(point, this.boardListPoints.element);
-    }
-
-    render(new CreateFormView(), this.boardComponent.element);
   }
 }
