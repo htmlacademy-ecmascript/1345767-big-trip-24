@@ -59,6 +59,7 @@ export default class MainPresenter {
     const pointPresenter = new PointPresenter({
       pointsListContainer: this.#boardListPoints.element,
       onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange,
     });
 
     pointPresenter.init(point, this.#offers, this.#destinations);
@@ -66,9 +67,18 @@ export default class MainPresenter {
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
   #handlePointChange = (updatedPoint) => {
     this.#points = updateItem(this.#points, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id)
       .init(updatedPoint, this.#offers, this.#destinations);
   };
+
+  #clearPointList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+  }
 }

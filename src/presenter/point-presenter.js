@@ -1,22 +1,26 @@
 import EditFormView from '../view/form-manipulation/edit-form-view.js';
 import PointView from '../view/main-board/point-view.js';
 import {remove, render, replace} from '../framework/render.js';
+import {MODE} from '../const.js';
 
 export default class PointPresenter {
   #pointsListContainer = null;
   #pointComponent = null;
   #pointEditComponent = null;
 
+  #handleModeChange = null;
   #handleDataChange = null;
 
   #point = null;
   #offers = null;
   #destination = null;
   #allDestinations = null;
+  #mode = MODE.DEFAULT;
 
-  constructor({pointsListContainer, onDataChange}) {
+  constructor({pointsListContainer, onDataChange, onModeChange}) {
     this.#pointsListContainer = pointsListContainer;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(point, offers, destination, allDestinations) {
@@ -49,11 +53,11 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#pointsListContainer.contains(prevPointComponent.element)) {
+    if (this.#mode === MODE.DEFAULT) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#pointsListContainer.contains(prevPointEditComponent.element)) {
+    if (this.#mode === MODE.EDITING) {
       replace(this.#pointEditComponent, prevPointEditComponent);
     }
 
@@ -66,6 +70,12 @@ export default class PointPresenter {
     remove(this.#pointEditComponent);
   }
 
+  resetView() {
+    if(this.#mode !== MODE.DEFAULT) {
+      this.#replaceFormToPoint();
+    }
+  }
+
   #escKeyDownHandler = (evt) => {
     if(evt.key === 'Escape') {
       evt.preventDefault();
@@ -76,10 +86,13 @@ export default class PointPresenter {
   #replacePointToForm = () => {
     replace(this.#pointEditComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = MODE.EDITING;
   };
 
   #replaceFormToPoint = () => {
     replace(this.#pointComponent, this.#pointEditComponent);
+    this.#mode = MODE.DEFAULT;
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
