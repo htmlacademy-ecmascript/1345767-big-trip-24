@@ -1,9 +1,12 @@
 import MainBoardView from '../view/main-board/main-board-view.js';
 import PointsListView from '../view/main-board/points-list-view.js';
 import ListMessageView from '../view/main-board/list-message-view.js';
+import SortView from '../view/main-board/sort-view.js';
 
-import {render} from '../framework/render.js';
+import {render, RenderPosition} from '../framework/render.js';
 import {updateItem} from '../utils.js';
+import {SortType} from '../const.js';
+import {getWeightForTime, getWeightForPrice} from '../utils/point-utils.js';
 
 import PointPresenter from './point-presenter.js';
 
@@ -14,7 +17,11 @@ export default class MainPresenter {
   #boardComponent = new MainBoardView();
   #boardListPoints = new PointsListView();
 
+  #sortingComponent = null;
+  #currentSortType = SortType.DAY;
+
   #points = [];
+  #initialPointsLayout = [];
   #destinations = [];
   #offers = [];
   #pointPresenters = new Map;
@@ -26,9 +33,20 @@ export default class MainPresenter {
 
   init() {
     this.#points = [...this.#pointModel.points];
+    this.#initialPointsLayout = [...this.#pointModel.points];
     this.#destinations = [...this.#pointModel.destinations];
     this.#offers = [...this.#pointModel.offers];
+    this.#renderSorting(this.#currentSortType);
     this.#renderPointsList();
+  }
+
+  #renderSorting(sortType) {
+    this.#sortingComponent = new SortView({
+      sortType: sortType,
+      onSortTypeChange: this.#handleSortTypeChange,
+    });
+
+    render(this.#sortingComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   }
 
   #renderPointsList() {
@@ -76,6 +94,29 @@ export default class MainPresenter {
     this.#pointPresenters.get(updatedPoint.id)
       .init(updatedPoint, this.#offers, this.#destinations);
   };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortPoints(sortType);
+    this.#clearPointList();
+    this.#renderPointsList();
+  };
+
+  #sortPoints(sortType) {
+    switch(sortType) {
+      case SortType.PRICE:
+        this.#points.sort(getWeightForPrice);
+        break;
+      case SortType.TIME:
+        this.#points.sort(getWeightForTime);
+        break;
+      default:
+        this.#points = [...this.#initialPointsLayout];
+    }
+    this.#currentSortType = sortType;
+  }
 
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());

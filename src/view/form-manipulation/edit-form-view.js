@@ -29,7 +29,7 @@ const getPointOfferItem = (pointOffer, pointOfferChecked) => `<div class="event_
 
 function editFormTemplate(point, offers, destinations) {
   const { type, destination, dateFrom, dateTo, basePrice, description, offers: pointOffers } = point;
-  const modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination.id).name;
+  const modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination).name;
   const offersArray = offers.find((offer) => offer.type === type).offers;
 
   const getOfferCheckedAttribute = (offerId) => {
@@ -135,7 +135,7 @@ export default class EditFormView extends AbstractView {
   }
 
   get template() {
-    return editFormTemplate(this.#point, this.#offers, this.#offers, this.#destination);
+    return editFormTemplate(this.#point, this.#offers, this.#destination);
   }
 
   #formSubmitHandler = (evt) => {
