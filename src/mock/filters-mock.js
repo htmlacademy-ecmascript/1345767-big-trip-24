@@ -1,9 +1,12 @@
-import {filters} from '../filter-const.js';
+import { filter } from '../utils/filter-utils.js';
 
-const generateFilters = (points) =>
-  Object.entries(filters).map(([filterType, filterPatternByType]) => ({
-    type: filterType,
-    count: filterPatternByType(points).length,
-  }));
+function generateFilter(points) {
+  return Object.entries(filter).map(
+    ([filterType, filterPoints]) => ({
+      type: filterType,
+      count: filterPoints(points).length,
+    }),
+  );
+}
 
-export {generateFilters};
+export { generateFilter };
