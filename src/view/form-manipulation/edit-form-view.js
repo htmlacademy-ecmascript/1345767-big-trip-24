@@ -120,16 +120,17 @@ export default class EditFormView extends AbstractStatefulView {
   #destinations = null;
   #offers = null;
   #handleFormSubmit = null;
-  #handleCloseForm = null;
+  #handleEditClick = null;
   #handleFormDelete = null;
 
   _state = {};
 
-  constructor({point, offers, destinations, onFormSubmit, onCloseForm}) {
+  constructor({point, offers, destinations, onEditClick, onFormSubmit, onCloseForm}) {
     super();
     this._setState(EditFormView.parsePointToState(point));
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#handleEditClick = onEditClick;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormDelete = onCloseForm;
 
@@ -140,10 +141,14 @@ export default class EditFormView extends AbstractStatefulView {
     return editFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
+  reset(point) {
+    this.updateElement(EditFormView.parsePointToState(point));
+  }
+
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditForm);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('form').addEventListener('submit', this.#handleFormDelete);
+    this.element.querySelector('form').addEventListener('reset', this.#formDeleteHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#formTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#formDestinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#formPriceInputHandler);
@@ -193,8 +198,8 @@ export default class EditFormView extends AbstractStatefulView {
     this.#handleFormDelete(EditFormView.parseStateToPoint(this._state));
   };
 
-  #closeEditForm = (evt) => {
+  #editClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleCloseForm();
+    this.#handleEditClick(EditFormView.parseStateToPoint(this._state));
   };
 }
