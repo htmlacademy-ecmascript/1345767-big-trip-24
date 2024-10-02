@@ -76,6 +76,7 @@ export default class MainPresenter {
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointsListContainer: this.#boardListPoints.element,
+      onEditPointView: this.#resetPointView,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange,
     });
@@ -84,6 +85,10 @@ export default class MainPresenter {
 
     this.#pointPresenters.set(point.id, pointPresenter);
   }
+
+  #resetPointView = (point) => {
+    this.#pointPresenters.get(point.id).resetView();
+  };
 
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
