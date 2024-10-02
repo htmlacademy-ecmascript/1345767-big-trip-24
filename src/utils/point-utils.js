@@ -53,4 +53,8 @@ function getWeightForTime(a, b) {
   }
 }
 
-export { humanizePointDate, getPointDuration, getWeightForPrice, getWeightForTime };
+const getOffersByType = (type, offers) => offers.find((offer) => offer.type === type).offers;
+
+const getDestinationId = (destinationName, destinations) => destinations.find((destinationElement) => destinationElement.name === destinationName).id;
+
+export { humanizePointDate, getPointDuration, getWeightForPrice, getWeightForTime, getOffersByType, getDestinationId };
