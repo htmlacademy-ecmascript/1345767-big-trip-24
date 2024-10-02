@@ -1,8 +1,8 @@
 import {capitalize} from '../../utils/common-utils.js';
-import { humanizePointDate } from '../../utils/point-utils.js';
+import { humanizePointDate, getOffersByType, getDestinationId } from '../../utils/point-utils.js';
 import { DATE_WITH_TIME_FORMAT, TYPES } from '../../const.js';
 import { CITIES } from '../../mock/const-mock.js';
-import AbstractView from '../../framework/view/abstract-view.js';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
 
 const createOfferClass = (offerTitle) => {
   const splittedOfferTitles = offerTitle.split(' ');
@@ -116,31 +116,81 @@ function editFormTemplate(point, offers, destinations) {
 </li>`;
 }
 
-export default class EditFormView extends AbstractView {
-  #point = null;
-  #destination = null;
+export default class EditFormView extends AbstractStatefulView {
+  #destinations = null;
   #offers = null;
   #handleFormSubmit = null;
   #handleCloseForm = null;
+  #handleFormDelete = null;
 
-  constructor({point, offers, destination, onFormSubmit, onCloseForm}) {
+  _state = {};
+
+  constructor({point, offers, destinations, onFormSubmit, onCloseForm}) {
     super();
-    this.#point = point;
-    this.#destination = destination;
+    this._setState(EditFormView.parsePointToState(point));
+    this.#destinations = destinations;
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
-    this.#handleCloseForm = onCloseForm;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditForm);
-    this.element.querySelector('.event__save-btn').addEventListener('submit', this.#formSubmitHandler);
+    this.#handleFormDelete = onCloseForm;
+
+    this._restoreHandlers();
   }
 
   get template() {
-    return editFormTemplate(this.#point, this.#offers, this.#destination);
+    return editFormTemplate(this._state, this.#offers, this.#destinations);
   }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditForm);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#handleFormDelete);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#formTypeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#formDestinationChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#formPriceInputHandler);
+  }
+
+  static parsePointToState(point) {
+    return {...point};
+  }
+
+  static parseStateToPoint(state) {
+    return {...state};
+  }
+
+  #formTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.element.querySelector('.event__label').textContent = evt.target.value;
+
+    this.updateElement(({
+      type: evt.target.value,
+      offers: getOffersByType(evt.target.value, this.#offers),
+    }));
+  };
+
+  #formDestinationChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    this.updateElement({
+      destination: getDestinationId(evt.target.value, this.#destinations),
+    });
+  };
+
+  #formPriceInputHandler = (evt) => {
+    evt.preventDefault();
+
+    this.updateElement({
+      basePrice: evt.target.value,
+    });
+  };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#point, this.#destination, this.#offers);
+    this.#handleFormSubmit(EditFormView.parseStateToPoint(this._state));
+  };
+
+  #formDeleteHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormDelete(EditFormView.parseStateToPoint(this._state));
   };
 
   #closeEditForm = (evt) => {

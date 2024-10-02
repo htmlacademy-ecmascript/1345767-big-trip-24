@@ -13,8 +13,7 @@ export default class PointPresenter {
 
   #point = null;
   #offers = null;
-  #destination = null;
-  #allDestinations = null;
+  #destinations = null;
   #mode = MODE.DEFAULT;
 
   constructor({pointsListContainer, onDataChange, onModeChange}) {
@@ -23,11 +22,10 @@ export default class PointPresenter {
     this.#handleModeChange = onModeChange;
   }
 
-  init(point, offers, destination, allDestinations) {
+  init(point, offers, destinations) {
     this.#point = point;
     this.#offers = offers;
-    this.#destination = destination;
-    this.#allDestinations = allDestinations;
+    this.#destinations = destinations;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
@@ -35,7 +33,7 @@ export default class PointPresenter {
     this.#pointComponent = new PointView({
       point: this.#point,
       offers: this.#offers,
-      destination: this.#destination,
+      destinations: this.#destinations,
       onEditClick: this.#replacePointToForm,
       onFavoriteClick: this.#handleFavoriteClick,
     });
@@ -43,7 +41,7 @@ export default class PointPresenter {
     this.#pointEditComponent = new EditFormView({
       point: this.#point,
       offers: this.#offers,
-      destination: this.#destination,
+      destinations: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
       onCloseForm: this.#replaceFormToPoint,
     });
@@ -92,8 +90,8 @@ export default class PointPresenter {
 
   #replaceFormToPoint = () => {
     replace(this.#pointComponent, this.#pointEditComponent);
-    this.#mode = MODE.DEFAULT;
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = MODE.DEFAULT;
   };
 
   #handleFormSubmit = (point) => {
