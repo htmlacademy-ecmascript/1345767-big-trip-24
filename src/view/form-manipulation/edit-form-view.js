@@ -121,6 +121,7 @@ function editFormTemplate(point, offers, destinations) {
 }
 
 export default class EditFormView extends AbstractStatefulView {
+  #initialPoint = null;
   #destinations = null;
   #offers = null;
   #handleFormSubmit = null;
@@ -131,6 +132,7 @@ export default class EditFormView extends AbstractStatefulView {
 
   constructor({point, offers, destinations, onEditClick, onFormSubmit, onCloseForm}) {
     super();
+    this.#initialPoint = point;
     this._setState(EditFormView.parsePointToState(point));
     this.#destinations = destinations;
     this.#offers = offers;
@@ -175,14 +177,6 @@ export default class EditFormView extends AbstractStatefulView {
     this.#setDateToPicker();
   }
 
-  static parsePointToState(point) {
-    return {...point};
-  }
-
-  static parseStateToPoint(state) {
-    return {...state};
-  }
-
   #formTypeChangeHandler = (evt) => {
     evt.preventDefault();
     this.element.querySelector('.event__label').textContent = evt.target.value;
@@ -216,12 +210,12 @@ export default class EditFormView extends AbstractStatefulView {
 
   #formDeleteHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormDelete(EditFormView.parseStateToPoint(this._state));
+    this.#handleFormDelete(EditFormView.parseStateToPoint(this.#initialPoint));
   };
 
   #editClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleEditClick(EditFormView.parseStateToPoint(this._state));
+    this.#handleEditClick(EditFormView.parseStateToPoint(this.#initialPoint));
   };
 
   #setDateFromPicker() {
@@ -252,14 +246,22 @@ export default class EditFormView extends AbstractStatefulView {
   }
 
   #dateFromChangeHandler = (userDate) => {
-    this.updateElement({
+    this._setState({
       dateFrom: userDate,
     });
   };
 
   #dateToChangeHandler = (userDate) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate,
     });
   };
+
+  static parsePointToState(point) {
+    return {...point};
+  }
+
+  static parseStateToPoint(state) {
+    return {...state};
+  }
 }
