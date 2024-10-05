@@ -1,8 +1,12 @@
 import {capitalize} from '../../utils/common-utils.js';
 import { humanizePointDate, getOffersByType, getDestinationId } from '../../utils/point-utils.js';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
 import { DATE_WITH_TIME_FORMAT, TYPES } from '../../const.js';
 import { CITIES } from '../../mock/const-mock.js';
-import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
+
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.css';
+
 
 const createOfferClass = (offerTitle) => {
   const splittedOfferTitles = offerTitle.split(' ');
@@ -120,16 +124,17 @@ export default class EditFormView extends AbstractStatefulView {
   #destinations = null;
   #offers = null;
   #handleFormSubmit = null;
-  #handleCloseForm = null;
+  #handleEditClick = null;
   #handleFormDelete = null;
+  #dateFromPicker = null;
+  #dateToPicker = null;
 
-  _state = {};
-
-  constructor({point, offers, destinations, onFormSubmit, onCloseForm}) {
+  constructor({point, offers, destinations, onEditClick, onFormSubmit, onCloseForm}) {
     super();
     this._setState(EditFormView.parsePointToState(point));
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#handleEditClick = onEditClick;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormDelete = onCloseForm;
 
@@ -140,13 +145,34 @@ export default class EditFormView extends AbstractStatefulView {
     return editFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
+  reset(point) {
+    this.updateElement(EditFormView.parsePointToState(point));
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#dateFromPicker) {
+      this.#dateFromPicker.destroy();
+      this.#dateFromPicker = null;
+    }
+
+    if (this.#dateToPicker) {
+      this.#dateToPicker.destroy();
+      this.#dateToPicker = null;
+    }
+  }
+
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditForm);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('form').addEventListener('submit', this.#handleFormDelete);
+    this.element.querySelector('form').addEventListener('reset', this.#formDeleteHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#formTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#formDestinationChangeHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#formPriceInputHandler);
+
+    this.#setDateFromPicker();
+    this.#setDateToPicker();
   }
 
   static parsePointToState(point) {
@@ -193,8 +219,47 @@ export default class EditFormView extends AbstractStatefulView {
     this.#handleFormDelete(EditFormView.parseStateToPoint(this._state));
   };
 
-  #closeEditForm = (evt) => {
+  #editClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleCloseForm();
+    this.#handleEditClick(EditFormView.parseStateToPoint(this._state));
+  };
+
+  #setDateFromPicker() {
+    this.#dateFromPicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        'time_24hr': true,
+        defaultDate: humanizePointDate(this._state.dateFrom, DATE_WITH_TIME_FORMAT),
+        onChange: this.#dateFromChangeHandler,
+      }
+    );
+  }
+
+  #setDateToPicker() {
+    this.#dateToPicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        'time_24hr': true,
+        minDate: humanizePointDate(this._state.dateFrom, DATE_WITH_TIME_FORMAT),
+        defaultDate: humanizePointDate(this._state.dateTo, DATE_WITH_TIME_FORMAT),
+        onChange: this.#dateToChangeHandler,
+      }
+    );
+  }
+
+  #dateFromChangeHandler = (userDate) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #dateToChangeHandler = (userDate) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
   };
 }
