@@ -215,7 +215,7 @@ export default class EditFormView extends AbstractStatefulView {
 
   #editClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleEditClick(EditFormView.parseStateToPoint(this.#initialPoint));
+    this.#handleEditClick(EditFormView.parseStateToPoint(this._state));
   };
 
   #setDateFromPicker() {
