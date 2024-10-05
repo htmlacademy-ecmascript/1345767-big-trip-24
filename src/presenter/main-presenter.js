@@ -5,7 +5,7 @@ import SortView from '../view/main-board/sort-view.js';
 
 import {render, RenderPosition} from '../framework/render.js';
 import {updateItem} from '../utils.js';
-import {SortType} from '../const.js';
+import {SortType, UPDATE_TYPE, USER_ACTION} from '../const.js';
 import {getWeightForTime, getWeightForPrice} from '../utils/point-utils.js';
 
 import PointPresenter from './point-presenter.js';
@@ -29,6 +29,12 @@ export default class MainPresenter {
   constructor({boardContainer, pointModel}) {
     this.#boardContainer = boardContainer;
     this.#pointModel = pointModel;
+
+    this.#pointModel.addObserver(this.#handleModelEvent);
+  }
+
+  get points() {
+    return this.#pointModel.points;
   }
 
   init() {
@@ -39,6 +45,36 @@ export default class MainPresenter {
     this.#renderSorting(this.#currentSortType);
     this.#renderPointsList();
   }
+
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case USER_ACTION.UPDATE_POINT:
+        this.#pointModel.updatePoint(updateType, update);
+        break;
+      case USER_ACTION.ADD_POINT:
+        this.#pointModel.addPoint(updateType, update);
+        break;
+      case USER_ACTION.DELETE_POINT:
+        this.#pointModel.deletePoint(updateType, update);
+        break;
+    }
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UPDATE_TYPE.PATCH:
+        this.#pointPresenters.get(data.id).init(data, this.#offers, this.#destinations);
+        break;
+      case UPDATE_TYPE.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UPDATE_TYPE.MAJOR:
+        this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
+        break;
+    }
+  };
 
   #renderSorting(sortType) {
     this.#sortingComponent = new SortView({
@@ -77,7 +113,7 @@ export default class MainPresenter {
     const pointPresenter = new PointPresenter({
       pointsListContainer: this.#boardListPoints.element,
       onEditPointView: this.#resetPointView,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
 
@@ -123,8 +159,16 @@ export default class MainPresenter {
     this.#currentSortType = sortType;
   }
 
+  #renderBoard() {
+    console.log("render Board");
+  }
+
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+  }
+
+  #clearBoard() {
+    console.log("Clear board");
   }
 }
