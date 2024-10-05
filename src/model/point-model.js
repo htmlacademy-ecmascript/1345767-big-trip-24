@@ -3,7 +3,7 @@ import { getDestinations } from '../mock/destinations.js';
 import { getOffers } from '../mock/offers.js';
 import Observable from '../framework/observable.js';
 
-export default class PointModel extends Observable{
+export default class PointModel extends Observable {
   #points = getPoints();
   #destinations = getDestinations();
   #offers = getOffers();
