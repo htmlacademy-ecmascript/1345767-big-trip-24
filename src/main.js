@@ -1,10 +1,9 @@
-import FiltersView from './view/header/filters-view.js';
 import TripInfoView from './view/header/trip-info-view.js';
 import MainPresenter from './presenter/main-presenter.js';
+import FilterPresenter from './presenter/filter-presenter.js';
 import PointModel from './model/point-model.js';
-
-import {generateFilter} from './mock/filters-mock.js';
 import {render, RenderPosition} from './framework/render.js';
+import FilterModel from './model/filter-model.js';
 
 const mainPage = document.querySelector('.page-main');
 const tripMainElement = document.querySelector('.trip-main');
@@ -12,13 +11,20 @@ const tripControlsFiltersElement = document.querySelector('.trip-controls__filte
 const mainContainer = mainPage.querySelector('.trip-events');
 
 const pointModel = new PointModel();
-const filters = generateFilter(pointModel.points);
+const filterModel = new FilterModel();
+
+render(new TripInfoView(), tripMainElement, RenderPosition.AFTERBEGIN);
+
+const filterPresenter = new FilterPresenter({
+  filterContainer: tripControlsFiltersElement,
+  pointModel: pointModel,
+  filterModel: filterModel,
+});
 const mainPresenter = new MainPresenter({
   boardContainer: mainContainer,
   pointModel: pointModel,
+  filterModel: filterModel,
 });
 
-render(new TripInfoView(), tripMainElement, RenderPosition.AFTERBEGIN);
-render(new FiltersView({filters}), tripControlsFiltersElement);
-
+filterPresenter.init();
 mainPresenter.init();

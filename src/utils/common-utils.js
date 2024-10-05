@@ -36,8 +36,4 @@ const createIdGenerator = () => {
   };
 };
 
-function updatePoint(points, update) {
-  return points.map((point) => point.id === update.id ? update : point);
-}
-
-export { capitalize, getRandomArrayElement, getRandomInteger, createIdGenerator, getRandomIntegerArray, updatePoint };
+export { capitalize, getRandomArrayElement, getRandomInteger, createIdGenerator, getRandomIntegerArray };
