@@ -9,6 +9,7 @@ const mainPage = document.querySelector('.page-main');
 const tripMainElement = document.querySelector('.trip-main');
 const tripControlsFiltersElement = document.querySelector('.trip-controls__filters');
 const mainContainer = mainPage.querySelector('.trip-events');
+const addNewPointButton = document.querySelector('.trip-main__event-add-btn');
 
 const pointModel = new PointModel();
 const filterModel = new FilterModel();
@@ -20,11 +21,24 @@ const filterPresenter = new FilterPresenter({
   pointModel: pointModel,
   filterModel: filterModel,
 });
+
 const mainPresenter = new MainPresenter({
   boardContainer: mainContainer,
   pointModel: pointModel,
   filterModel: filterModel,
+  onNewPointDestroy: handleNewPointFormClose,
 });
+
+addNewPointButton.addEventListener('click', handleNewPointButtonClick);
 
 filterPresenter.init();
 mainPresenter.init();
+
+function handleNewPointFormClose() {
+  addNewPointButton.disabled = false;
+}
+
+function handleNewPointButtonClick() {
+  mainPresenter.createPoint();
+  addNewPointButton.disabled = true;
+}

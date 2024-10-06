@@ -36,4 +36,11 @@ const USER_ACTION = {
   DELETE_POINT: 'DELETE_POINT',
 };
 
-export { TYPES, DATE_FORMAT, TIME_FORMAT, DATE_WITH_TIME_FORMAT, FilterType, SortType, MODE, UPDATE_TYPE, USER_ACTION };
+const NO_POINTS_MESSAGES = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.PAST]: 'There are no past events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.FUTURE]: 'There are no future events now',
+};
+
+export { TYPES, DATE_FORMAT, TIME_FORMAT, DATE_WITH_TIME_FORMAT, FilterType, SortType, MODE, UPDATE_TYPE, USER_ACTION, NO_POINTS_MESSAGES };

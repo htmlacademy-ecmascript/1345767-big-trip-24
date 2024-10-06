@@ -101,7 +101,6 @@ export default class PointPresenter {
 
   #handleFormEditClick = (point) => {
     this.resetView(point);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleFormSubmit = (point) => {
