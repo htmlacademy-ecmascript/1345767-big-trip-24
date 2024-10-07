@@ -33,6 +33,8 @@ export default class MainPresenter {
     this.#boardContainer = boardContainer;
     this.#pointModel = pointModel;
     this.#filterModel = filterModel;
+    this.#destinations = [...this.#pointModel.destinations];
+    this.#offers = [...this.#pointModel.offers];
 
     this.#newPointPresenter = new NewPointPresenter({
       offers: this.#offers,
@@ -47,9 +49,6 @@ export default class MainPresenter {
   }
 
   init() {
-    this.#destinations = [...this.#pointModel.destinations];
-    this.#offers = [...this.#pointModel.offers];
-
     this.#renderBoard();
   }
 
