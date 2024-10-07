@@ -1,14 +1,15 @@
-import MainBoardView from '../view/main-board/main-board-view.js';
-import PointsListView from '../view/main-board/points-list-view.js';
-import ListMessageView from '../view/main-board/list-message-view.js';
-import SortView from '../view/main-board/sort-view.js';
-
 import {remove, render, RenderPosition} from '../framework/render.js';
 import {FilterType, SortType, UPDATE_TYPE, USER_ACTION} from '../const.js';
 import {getWeightForTime, getWeightForPrice} from '../utils/point-utils.js';
 import {filter} from '../utils/filter-utils.js';
 
+import MainBoardView from '../view/main-board/main-board-view.js';
+import PointsListView from '../view/main-board/points-list-view.js';
+import SortView from '../view/main-board/sort-view.js';
+
 import PointPresenter from './point-presenter.js';
+import NoPointView from '../view/main-board/no-points-text-type';
+import NewPointPresenter from './new-point-presenter.js';
 
 export default class MainPresenter {
   #boardContainer = null;
@@ -21,24 +22,33 @@ export default class MainPresenter {
   #sortingComponent = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #noPointComponent = null;
+  #newPointPresenter = null;
 
   #destinations = [];
   #offers = [];
   #pointPresenters = new Map;
 
-  constructor({boardContainer, pointModel, filterModel}) {
+  constructor({boardContainer, pointModel, filterModel, onNewPointDestroy}) {
     this.#boardContainer = boardContainer;
     this.#pointModel = pointModel;
     this.#filterModel = filterModel;
+    this.#destinations = [...this.#pointModel.destinations];
+    this.#offers = [...this.#pointModel.offers];
+
+    this.#newPointPresenter = new NewPointPresenter({
+      offers: this.#offers,
+      destinations: this.#destinations,
+      pointListContainer: this.#boardContainer,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy,
+    });
 
     this.#pointModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   init() {
-    this.#destinations = [...this.#pointModel.destinations];
-    this.#offers = [...this.#pointModel.offers];
-
     this.#renderBoard();
   }
 
@@ -54,6 +64,12 @@ export default class MainPresenter {
         return filteredPoints.sort(getWeightForTime);
     }
     return filteredPoints;
+  }
+
+  createPoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UPDATE_TYPE.MAJOR, FilterType.EVERYTHING);
+    this.#newPointPresenter.init();
   }
 
   #handleViewAction = (actionType, updateType, update) => {
@@ -91,6 +107,7 @@ export default class MainPresenter {
   };
 
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -126,10 +143,8 @@ export default class MainPresenter {
   }
 
   #renderNoPoints() {
-    render(
-      new ListMessageView({message: 'Click New Event to create your first point'}),
-      this.#boardListPoints.element
-    );
+    this.#noPointComponent = new NoPointView({filterType: this.#filterType});
+    render(this.#noPointComponent, this.#boardListPoints.element);
   }
 
   #renderPoints() {
@@ -156,6 +171,7 @@ export default class MainPresenter {
     this.#pointPresenters.clear();
 
     remove(this.#sortingComponent);
+    remove(this.#noPointComponent);
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;

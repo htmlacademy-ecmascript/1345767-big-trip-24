@@ -53,8 +53,15 @@ function getWeightForTime(a, b) {
   }
 }
 
+const toggleOffers = (offers, id) => {
+  if (offers.includes(id)) {
+    return offers.filter((offer) => offer !== id);
+  }
+  return [...offers, id];
+};
+
 const getOffersByType = (type, offers) => offers.find((offer) => offer.type === type).offers;
 
-const getDestinationId = (destinationName, destinations) => destinations.find((destinationElement) => destinationElement.name === destinationName).id;
+const getDestinationId = (destinationName, destinations) => destinations.find((destinationElement) => destinationElement.name === destinationName)?.id;
 
-export { humanizePointDate, getPointDuration, getWeightForPrice, getWeightForTime, getOffersByType, getDestinationId };
+export { humanizePointDate, getPointDuration, getWeightForPrice, getWeightForTime, getOffersByType, getDestinationId, toggleOffers };
