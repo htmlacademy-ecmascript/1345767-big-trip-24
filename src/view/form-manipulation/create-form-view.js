@@ -43,7 +43,7 @@ const getPointOfferItem = (pointOffer, pointOfferChecked) => `<div class="event_
 
 function editFormTemplate(point, offers, destinations) {
   const { type, destination, dateFrom, dateTo, basePrice, description, offers: pointOffers } = point;
-  const modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination).name;
+  const modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination)?.name;
   const offersArray = offers.offers;
 
   const getOfferCheckedAttribute = (offerId) => {
