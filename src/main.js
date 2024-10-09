@@ -5,6 +5,8 @@ import PointModel from './model/point-model.js';
 import {render, RenderPosition} from './framework/render.js';
 import FilterModel from './model/filter-model.js';
 
+import PointsApiService from './API/points-api-service.js';
+
 const mainPage = document.querySelector('.page-main');
 const tripMainElement = document.querySelector('.trip-main');
 const tripControlsFiltersElement = document.querySelector('.trip-controls__filters');
