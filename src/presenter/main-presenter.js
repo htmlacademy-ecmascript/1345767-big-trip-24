@@ -99,6 +99,10 @@ export default class MainPresenter {
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
+      case UPDATE_TYPE.INIT:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
     }
   };
 

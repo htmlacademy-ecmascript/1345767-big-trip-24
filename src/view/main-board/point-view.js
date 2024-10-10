@@ -3,7 +3,7 @@ import { DATE_FORMAT, TIME_FORMAT } from '../../const.js';
 import AbstractView from '../../framework/view/abstract-view.js';
 
 const getOffers = (offerType, offersList) => {
-  const offers = offersList.find((offer) => offer.type === offerType).offers;
+  const offers = offersList.find((offer) => offer.type === offerType)?.offers;
 
   const renderOffers = (title, price) => `<li class="event__offer">
       <span class="event__offer-title">${title}</span>
@@ -11,14 +11,12 @@ const getOffers = (offerType, offersList) => {
       <span class="event__offer-price">${price}</span>
       </li>`;
 
-  return offers.map((offer) => renderOffers(offer.title, offer.price)).join('');
+  return offers?.map((offer) => renderOffers(offer.title, offer.price)).join('');
 };
 
-function createPointTemplate(point, offers, destinations) {
+function createPointTemplate(point, offers, allDestinations) {
   const { type, destination, dateFrom, dateTo, basePrice, isFavorite } = point;
-
-  const modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination).name;
-
+  const modifiedDestination = allDestinations.find((destinationElement) => destinationElement.id === destination)?.name;
   const favoriteClassName = isFavorite ? 'event__favorite-btn event__favorite-btn--active' : 'event__favorite-btn';
 
   return `<li class="trip-events__item">
