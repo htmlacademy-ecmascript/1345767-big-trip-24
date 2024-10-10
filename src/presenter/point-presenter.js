@@ -1,7 +1,7 @@
 import EditFormView from '../view/form-manipulation/edit-form-view.js';
 import PointView from '../view/main-board/point-view.js';
 import {remove, render, replace} from '../framework/render.js';
-import {MODE} from '../const.js';
+import {MODE, UPDATE_TYPE, USER_ACTION} from '../const.js';
 
 export default class PointPresenter {
   #pointsListContainer = null;
@@ -105,12 +105,20 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
-    this.#handleDataChange(point);
+    this.#handleDataChange(
+      USER_ACTION.UPDATE_POINT,
+      UPDATE_TYPE.MINOR,
+      point,
+    );
     this.#replaceFormToPoint();
   };
 
   #handleFavoriteClick = () => {
     const updatedItem = {...this.#point, isFavorite: !this.#point.isFavorite};
-    this.#handleDataChange(updatedItem);
+    this.#handleDataChange(
+      USER_ACTION.UPDATE_POINT,
+      UPDATE_TYPE.MINOR,
+      updatedItem,
+    );
   };
 }
