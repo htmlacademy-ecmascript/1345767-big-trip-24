@@ -40,6 +40,7 @@ addNewPointButton.addEventListener('click', handleNewPointButtonClick);
 
 filterPresenter.init();
 mainPresenter.init();
+pointModel.init();
 
 function handleNewPointFormClose() {
   addNewPointButton.disabled = false;
