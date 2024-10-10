@@ -7,7 +7,6 @@ import { CITIES } from '../../mock/const-mock.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
 
-
 const createOfferClass = (offerTitle) => {
   const splittedOfferTitles = offerTitle.split(' ');
   return splittedOfferTitles[splittedOfferTitles.length - 1];
@@ -33,8 +32,8 @@ const getPointOfferItem = (pointOffer, pointOfferChecked) => `<div class="event_
 
 function editFormTemplate(point, offers, destinations) {
   const { type, destination, dateFrom, dateTo, basePrice, description, offers: pointOffers } = point;
-  const modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination).name;
-  const offersArray = offers.find((offer) => offer.type === type).offers;
+  const modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination)?.name;
+  const offersArray = offers.find((offer) => offer.type === type)?.offers;
 
   const getOfferCheckedAttribute = (offerId) => {
     if (pointOffers.includes(offerId)) {
@@ -107,7 +106,7 @@ function editFormTemplate(point, offers, destinations) {
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
         <div class="event__available-offers">
-        ${offersArray.map((pointOffer) => getPointOfferItem(pointOffer, getOfferCheckedAttribute(pointOffer.id))).join('')}
+        ${offersArray?.map((pointOffer) => getPointOfferItem(pointOffer, getOfferCheckedAttribute(pointOffer.id))).join('')}
         </div>
       </section>
 
@@ -215,7 +214,7 @@ export default class EditFormView extends AbstractStatefulView {
 
   #editClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleEditClick(EditFormView.parseStateToPoint(this.#initialPoint));
+    this.#handleEditClick(EditFormView.parseStateToPoint(this._state));
   };
 
   #setDateFromPicker() {

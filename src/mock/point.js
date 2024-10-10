@@ -1,7 +1,8 @@
-import { getRandomArrayElement, getRandomInteger, createIdGenerator } from '../utils/common-utils.js';
+import { getRandomArrayElement, getRandomInteger } from '../utils/common-utils.js';
 import { CITIES, DESCRIPTION_TEXT, DATES } from './const-mock.js';
 import { TYPES } from '../const.js';
 import { getOffers } from './offers.js';
+import {nanoid} from 'nanoid';
 
 const POINTS_COUNT = 10;
 const offersData = getOffers();
@@ -11,8 +12,6 @@ const getRandomDescriptionPoint = (text) => {
   const randomDescriptionText = Array.from({ length: 5 }, () => getRandomArrayElement(descriptionsArray).trim()).join('.');
   return randomDescriptionText;
 };
-
-const generateRandomPointId = createIdGenerator();
 
 const createPointMock = () => {
   const pointDate = getRandomArrayElement(DATES);
@@ -38,7 +37,7 @@ const createPointMock = () => {
   };
 
   const pointMock = {
-    id: generateRandomPointId(),
+    id: nanoid(),
     type: pointType,
     destination: getRandomInteger(1, CITIES.length),
     description: getRandomDescriptionPoint(DESCRIPTION_TEXT),
