@@ -17,18 +17,6 @@ function getCurrentDate() {
   return dayjs.toDate();
 }
 
-function isActualPoint(point) {
-  return point.dateTo && (dayjs().isSame(dayjs(point.dateFrom), 'minute') || dayjs().isAfter(dayjs(point.dateTo), 'milliseconds'));
-}
-
-function isExpiredPoint(point) {
-  return dayjs(point.dateTo) && dayjs().isAfter(dayjs(point.dateTo), 'milliseconds');
-}
-
-function isFuturePoint(point) {
-  return dayjs().isBefore(point.dateFrom, 'minute');
-}
-
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
 export {
