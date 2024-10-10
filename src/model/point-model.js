@@ -4,9 +4,19 @@ import { getOffers } from '../mock/offers.js';
 import Observable from '../framework/observable.js';
 
 export default class PointModel extends Observable {
+  #pointsApiService = null;
   #points = getPoints();
   #destinations = getDestinations();
   #offers = getOffers();
+
+  constructor({pointsApiService}) {
+    super();
+    this.#pointsApiService = pointsApiService;
+
+    this.#pointsApiService.points.then((points) => {
+      console.log(points.map(this.#adaptToClient));
+    });
+  }
 
   get points() {
     return this.#points;
@@ -54,5 +64,22 @@ export default class PointModel extends Observable {
     ];
 
     this._notify(updateType);
+  }
+
+  #adaptToClient(point) {
+    const adaptedPoint = {...point,
+      dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'],
+      dateTo: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
+      isFavorite: point['is_favorite'],
+      basePrice: point['base_price'],
+    };
+
+    // Удаляем все лишние ключи
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['is_favorite'];
+    delete adaptedPoint['base_price'];
+
+    return adaptedPoint;
   }
 }
