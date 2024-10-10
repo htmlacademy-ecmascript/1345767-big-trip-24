@@ -6,6 +6,8 @@ import {render, RenderPosition} from './framework/render.js';
 import FilterModel from './model/filter-model.js';
 
 import PointsApiService from './API/points-api-service.js';
+const AUTHORIZATION = 'Basic lantsovR1345767';
+const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
 
 const mainPage = document.querySelector('.page-main');
 const tripMainElement = document.querySelector('.trip-main');
@@ -13,7 +15,10 @@ const tripControlsFiltersElement = document.querySelector('.trip-controls__filte
 const mainContainer = mainPage.querySelector('.trip-events');
 const addNewPointButton = document.querySelector('.trip-main__event-add-btn');
 
-const pointModel = new PointModel();
+const pointModel = new PointModel({
+  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION),
+});
+
 const filterModel = new FilterModel();
 
 render(new TripInfoView(), tripMainElement, RenderPosition.AFTERBEGIN);
