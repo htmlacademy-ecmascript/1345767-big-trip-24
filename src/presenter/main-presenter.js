@@ -37,8 +37,6 @@ export default class MainPresenter {
     this.#offers = [...this.#pointModel.offers];
 
     this.#newPointPresenter = new NewPointPresenter({
-      offers: this.#offers,
-      destinations: this.#destinations,
       pointListContainer: this.#boardContainer,
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy,
@@ -50,6 +48,8 @@ export default class MainPresenter {
 
   init() {
     this.#renderBoard();
+    this.#offers = this.offers;
+    this.#destinations = this.destinations;
   }
 
   get points() {
@@ -64,6 +64,14 @@ export default class MainPresenter {
         return filteredPoints.sort(getWeightForTime);
     }
     return filteredPoints;
+  }
+
+  get destinations() {
+    return this.#pointModel.destinations;
+  }
+
+  get offers() {
+    return this.#pointModel.offers;
   }
 
   createPoint() {
@@ -165,7 +173,7 @@ export default class MainPresenter {
       onModeChange: this.#handleModeChange,
     });
 
-    pointPresenter.init(point, this.#offers, this.#destinations);
+    pointPresenter.init(point, this.offers, this.destinations);
 
     this.#pointPresenters.set(point.id, pointPresenter);
   }
