@@ -9,6 +9,7 @@ import SortView from '../view/main-board/sort-view.js';
 
 import PointPresenter from './point-presenter.js';
 import NoPointView from '../view/main-board/no-points-text-type';
+import LoadingView from '../view/main-board/loading-view.js';
 import NewPointPresenter from './new-point-presenter.js';
 
 export default class MainPresenter {
@@ -18,6 +19,7 @@ export default class MainPresenter {
 
   #boardComponent = new MainBoardView();
   #boardListPoints = new PointsListView();
+  #loadingComponent = new LoadingView();
 
   #sortingComponent = null;
   #currentSortType = SortType.DAY;
@@ -28,6 +30,7 @@ export default class MainPresenter {
   #destinations = [];
   #offers = [];
   #pointPresenters = new Map;
+  #isLoading = true;
 
   constructor({boardContainer, pointModel, filterModel, onNewPointDestroy}) {
     this.#boardContainer = boardContainer;
@@ -77,7 +80,7 @@ export default class MainPresenter {
   createPoint() {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UPDATE_TYPE.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init();
+    this.#newPointPresenter.init(this.offers, this.destinations);
   }
 
   #handleViewAction = (actionType, updateType, update) => {
@@ -108,6 +111,8 @@ export default class MainPresenter {
         this.#renderBoard();
         break;
       case UPDATE_TYPE.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#clearBoard();
         this.#renderBoard();
         break;
@@ -141,9 +146,18 @@ export default class MainPresenter {
     this.#renderBoard();
   };
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderBoard() {
     render(this.#boardComponent, this.#boardContainer);
     render(this.#boardListPoints, this.#boardComponent.element);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
 
     this.#renderSorting();
 
@@ -183,6 +197,7 @@ export default class MainPresenter {
     this.#pointPresenters.clear();
 
     remove(this.#sortingComponent);
+    remove(this.#loadingComponent);
     remove(this.#noPointComponent);
 
     if (resetSortType) {
