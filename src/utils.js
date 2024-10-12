@@ -24,8 +24,5 @@ export {
   getRandomNumber,
   getCurrentDate,
   humanizePointDueDate,
-  isFuturePoint,
-  isActualPoint,
-  isExpiredPoint,
   updateItem,
 };
