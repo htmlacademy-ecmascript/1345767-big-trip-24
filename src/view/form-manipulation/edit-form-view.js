@@ -48,7 +48,7 @@ const getDestinationInfo = (description, pictures) => {
     <p class="event__destination-description">${description}</p>
     <div class="event__photos-container">
     <div class="event__photos-tape">
-    ${pictures?.map((picture) => getDestinationPicture(picture)).join('')}
+    ${pictures.map((picture) => getDestinationPicture(picture)).join('')}
     </div>
     </div>
     </section>`;
@@ -64,7 +64,7 @@ const getOfferCheckedAttribute = (pointOffers, offerId) => {
 };
 
 const getOffersInfo = (allOffers, pointOffers) => {
-  if (allOffers?.length > 0) {
+  if (allOffers.length > 0) {
     return `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
   <div class="event__available-offers">
@@ -81,12 +81,12 @@ function createEditPointTemplate(point, offers, destinations, isNewPoint) {
   let pictures = [];
 
   if (destination !== null) {
-    modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination)?.name;
-    description = destinations.find((destinationElement) => destinationElement.id === destination)?.description;
-    pictures = destinations.find((destinationElement) => destinationElement.id === destination)?.pictures;
+    modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination).name;
+    description = destinations.find((destinationElement) => destinationElement.id === destination).description;
+    pictures = destinations.find((destinationElement) => destinationElement.id === destination).pictures;
   }
 
-  const allOffers = offers.find((offer) => offer.type === type)?.offers;
+  const allOffers = offers.find((offer) => offer.type === type).offers;
 
   const getTypeCheckedAttribute = (pointType) => {
     if (pointType === type) {
