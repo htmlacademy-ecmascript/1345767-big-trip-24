@@ -76,15 +76,9 @@ const getOffersInfo = (allOffers, pointOffers) => {
 
 function createEditPointTemplate(point, offers, destinations, isNewPoint) {
   const { type, destination, dateFrom, dateTo, basePrice, offers: pointOffers } = point;
-  let modifiedDestination = '';
-  let description = '';
-  let pictures = [];
-
-  if (destination !== null) {
-    modifiedDestination = destinations.find((destinationElement) => destinationElement.id === destination).name;
-    description = destinations.find((destinationElement) => destinationElement.id === destination).description;
-    pictures = destinations.find((destinationElement) => destinationElement.id === destination).pictures;
-  }
+  const destinationPoint = destination !== '' ? destinations.find((destinationElement) => destinationElement.id === destination) : '';
+  const description = destinationPoint !== '' ? destinationPoint.description : '';
+  const pictures = destinationPoint !== '' ? destinationPoint.pictures : [];
 
   const allOffers = offers.find((offer) => offer.type === type).offers;
 
@@ -117,7 +111,7 @@ function createEditPointTemplate(point, offers, destinations, isNewPoint) {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${modifiedDestination}" list="destination-list-1" required>
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationPoint ? destinationPoint.name : ''}" list="destination-list-1" required>
         <datalist id="destination-list-1">
           ${destinations.map((destinationElement) => createDestinationsList(destinationElement.name)).join('') ?? ''}
         </datalist>
