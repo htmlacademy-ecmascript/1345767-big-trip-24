@@ -1,9 +1,8 @@
-import TripInfoView from './view/header/trip-info-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointModel from './model/point-model.js';
-import {render, RenderPosition} from './framework/render.js';
 import FilterModel from './model/filter-model.js';
+import TripInfoPresenter from './presenter/trip-info-presenter.js';
 
 import PointsApiService from './API/points-api-service.js';
 const AUTHORIZATION = 'Basic lantsovR1345767';
@@ -21,12 +20,15 @@ const pointModel = new PointModel({
 
 const filterModel = new FilterModel();
 
-render(new TripInfoView(), tripMainElement, RenderPosition.AFTERBEGIN);
-
 const filterPresenter = new FilterPresenter({
   filterContainer: tripControlsFiltersElement,
   pointModel: pointModel,
   filterModel: filterModel,
+});
+
+const tripInfoPresenter = new TripInfoPresenter({
+  pointsModel: pointModel,
+  header: tripMainElement
 });
 
 const mainPresenter = new MainPresenter({
@@ -41,6 +43,7 @@ addNewPointButton.addEventListener('click', handleNewPointButtonClick);
 filterPresenter.init();
 mainPresenter.init();
 pointModel.init();
+tripInfoPresenter.init();
 
 function handleNewPointFormClose() {
   addNewPointButton.disabled = false;
